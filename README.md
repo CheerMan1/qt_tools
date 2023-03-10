@@ -1,6 +1,8 @@
 # qt_tools
 收藏工作中常用的组件
 
+[常用的脚本](scrpits)
+
 | 功能      | 文件                                                 |
 |---------|:---------------------------------------------------|
 | 管理员登录窗口 | [administrator_dialog.py](administrator_dialog.py) |
