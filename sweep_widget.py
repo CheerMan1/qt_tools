@@ -16,6 +16,8 @@ from PySide6.QtWidgets import QLineEdit, QLabel, QDialog, QFormLayout, QMessageB
 
 
 class SweepInputWidget(QLineEdit):
+    input_valid_signal = Signal(bool, str)
+
     def __init__(self, reg_ex: Optional[str] = None, parent=None):
         super().__init__(parent)
         self.reg_ex = reg_ex
@@ -24,6 +26,27 @@ class SweepInputWidget(QLineEdit):
             validator = QRegularExpressionValidator(self.reg_ex, self)
             self.setValidator(validator)
 
+    def keyPressEvent(self, event) -> None:
+        if event.key() in [Qt.Key_Return, Qt.Key_Enter]:
+            match = self.check_text_is_valid()
+            self.input_valid_signal.emit(match, self.text())
+
+            if not match:
+                self.clear()
+                self.setFocus()
+
+        super().keyPressEvent(event)
+
+    def check_text_is_valid(self):
+        if self.reg_ex is not None:
+            match = re.match(self.reg_ex, self.text()) is not None
+        else:
+            match = True
+
+        return match
+
+
+# 1. 指定正则
 
 class SweepWidget(QDialog):
     sweep_result_signal = Signal(dict)
@@ -34,21 +57,28 @@ class SweepWidget(QDialog):
         self.setMinimumWidth(500)
         self.setWindowModality(Qt.ApplicationModal)
         self.is_ok = False
-        self.setStyleSheet("font-size: 28px")
 
         layout = QFormLayout()
         self.widget_collection = {}
-        self.scan_fields = {}
 
         for tip, reg in zip(labels, reg_exs):
             line_edit = SweepInputWidget(reg)
-            line_edit.setMinimumHeight(40)
-            layout.addRow(tip + ": ", line_edit)
+            label = QLabel(tip + ": ")
+            layout.addRow(label, line_edit)
             self.widget_collection[tip] = line_edit
+
+            label.setStyleSheet("font-size: 28px")
+
+            line_edit.setMinimumHeight(40)
             line_edit.setProperty("reg", reg)
+            line_edit.setStyleSheet("font-size: 28px")
 
         widgets = list(self.widget_collection.values())
         for idx, widget in enumerate(widgets):
+            widget.input_valid_signal.connect(self.on_check_input_valid)
+            if idx == 0:
+                widget.setFocus()
+
             if idx == len(widgets) - 1:
                 widget.returnPressed.connect(self.on_ok)
             else:
@@ -56,49 +86,38 @@ class SweepWidget(QDialog):
 
         self.info_label = QLabel()
         self.info_label.setMinimumHeight(40)
+        self.info_label.setStyleSheet("font-size: 18px")
 
         main_layout = QVBoxLayout()
         main_layout.addLayout(layout)
         main_layout.addWidget(self.info_label)
         self.setLayout(main_layout)
 
-        self.close()
+        self.setVisible(False)
+
+    def on_check_input_valid(self, match, text):
+        self.info_label.clear()
+
+        if not match:
+            self.info_label.setText(f"'{text}' 输入字段错误, 请重新扫描!!")
 
     def on_ok(self):
-        self.scan_fields.clear()
+        scan_fields = {}
         for idx, (tip, widget) in enumerate(self.widget_collection.items()):
-            reg = widget.property("reg")
-            if reg is not None:
-                match = re.match(reg, widget.text())
-            else:
-                match = True
-            if not match:
-                self.info_label.setStyleSheet("color: red;")
-                self.info_label.setText("输入字段错误, 请重新扫描!!")
-                widget.clear()
-                widget.setFocus()
+            if not widget.check_text_is_valid():
+                self.on_check_input_valid(False, widget.text())
                 return
+            scan_fields[tip] = widget.text()
 
-            self.scan_fields[tip] = widget.text()
-            widget.clear()
-
-            if idx == 0:
-                widget.setFocus()
-
-        self.info_label.clear()
         self.is_ok = True
-        self.sweep_result_signal.emit(self.scan_fields)
         self.close()
+        self.sweep_result_signal.emit(scan_fields)
 
-    def show(self) -> None:
-        self.is_ok = False
-        self.scan_fields.clear()
-        super().show()
-
-    def exec_(self) -> int:
-        self.is_ok = False
-        self.scan_fields.clear()
-        super().exec_()
+    def closeEvent(self, event) -> None:
+        if self.is_ok:
+            event.accept()
+        else:
+            event.ignore()
 
 
 if __name__ == '__main__':
@@ -107,4 +126,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = SweepWidget(labels=["mac", "sn"], reg_exs=["^BC[0-9A-Z]{15}$", "^BC[0-9A-Z]{15}$"])
     win.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

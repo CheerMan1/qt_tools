@@ -2,7 +2,7 @@
 
 
 
-#### 1 base64 -> QPixmap
+#### 1. base64数据转QPixmap
 ```python
 def get_pixmap(data_base64, fmt='png'):
     data = QByteArray().fromBase64(data_base64.encode())
@@ -12,7 +12,7 @@ def get_pixmap(data_base64, fmt='png'):
     return pix
 ```
 
-#### 2 img_file -> base64
+#### 2. 图片转base64数据
 ```python
 def to_base64(file_path, fmt="png"):
     image = QImage(file_path)
