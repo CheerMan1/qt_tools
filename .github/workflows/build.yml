@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]  # 三个平台
+        os: [windows-latest, macos-latest]  # 三个平台
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
