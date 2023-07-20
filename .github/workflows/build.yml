@@ -13,7 +13,7 @@ jobs:
 #        os: [windows-latest, ubuntu-latest, macos-latest]  # 三个平台
     steps:
       - name: Checkout code
-        uses: actions/checkout@v8
+        uses: actions/checkout@v1
 #
 #      - name: Set up Python
 #        uses: actions/setup-python@v2
