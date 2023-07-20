@@ -1,6 +1,5 @@
 name: build and release
 on:
-  # 触发动作：创建新标签
   push:
     tags:
       - '*'
@@ -10,29 +9,30 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]  # 三个平台
+        os: [windows-latest]  # 三个平台
+#        os: [windows-latest, ubuntu-latest, macos-latest]  # 三个平台
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-        
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pyinstaller  # 假设你用pyinstaller打包
-        
-      - name: Build executable
-        run: |
-          pyinstaller your-script.py  # 打包脚本
-          
-      - name: Update release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            dist/your-executable
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/checkout@v8
+#
+#      - name: Set up Python
+#        uses: actions/setup-python@v2
+#        with:
+#          python-version: '3.x'
+#
+#      - name: Install dependencies
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install pyinstaller  # 假设你用pyinstaller打包
+#
+#      - name: Build executable
+#        run: |
+#          pyinstaller your-script.py  # 打包脚本
+#
+#      - name: Update release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          files: |
+#            dist/your-executable
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
