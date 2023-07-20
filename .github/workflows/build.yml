@@ -17,8 +17,8 @@ jobs:
       
       - name: check
         run:
-            echo "check"
-        	ls -la
+          echo "check"
+          ls -la
       
 #      - name: Set up Python
 #        uses: actions/setup-python@v2
