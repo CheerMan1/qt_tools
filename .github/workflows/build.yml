@@ -34,15 +34,34 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip list
-#
-#      - name: Build executable
-#        run: |
-#          pyinstaller your-script.py  # 打包脚本
-#
-#      - name: Update release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          files: |
-#            dist/your-executable
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build executable
+        run: |
+          pyinstaller -F pyinstaller -F countdown_dialog.py
+          ls
+          cd dist
+          ls
+      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  # This pulls from the CREATE RELEASE step above, referencing it's ID
+          asset_path: ./dist/countdown_dialog.exe
+          asset_name: countdown_dialog.exe
+          asset_content_type: application/x-msdownload
+          
+
