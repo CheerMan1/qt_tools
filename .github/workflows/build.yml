@@ -37,7 +37,7 @@ jobs:
 
       - name: Build executable
         run: |
-          pyinstaller -F pyinstaller -F countdown_dialog.py
+          pyinstaller -F countdown_dialog.py
           ls
           cd dist
           ls
