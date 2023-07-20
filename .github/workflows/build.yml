@@ -15,27 +15,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
       
-      - name: check
-        run:
-          ls
-      
-#      - name: Set up Python
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: '3.7.4'
-#
-#      - name: Cache pip dependencies
-#        uses: actions/cache@v2
-#        with:
-#          path: ~/.cache/pip
-#          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-#          restore-keys: |
-#            ${{ runner.os }}-pip-
-#
-#      - name: Install dependencies
-#        if: steps.cache-pip.outputs.cache-hit != 'true'
-#        run: |
-#          ls
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7.4'
+
+      - name: Cache pip dependencies
+        id: cache-pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        if: steps.cache-pip.outputs.cache-hit != 'true'
+        run: |
+          pip install -r requirements.txt
+          pip list
 #
 #      - name: Build executable
 #        run: |
