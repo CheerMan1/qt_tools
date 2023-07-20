@@ -45,7 +45,6 @@ class SweepInputWidget(QLineEdit):
 
         return match
 
-
 # 1. 指定正则
 
 class SweepWidget(QDialog):
