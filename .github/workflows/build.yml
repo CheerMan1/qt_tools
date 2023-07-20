@@ -1,8 +1,8 @@
 name: build and release
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
 
 jobs:
   build:
@@ -15,6 +15,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
       
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7.4'
+      
       - name: Cache pip dependencies
         uses: actions/cache@v2
         with:
@@ -23,16 +28,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.7.4'
-
       - name: Install dependencies
+#        if: steps.cache-pip.outputs.cache-hit != 'true'
         run: |
-          pip list
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pwd
+          ls
           pip list
 #
 #      - name: Build executable
