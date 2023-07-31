@@ -1,8 +1,8 @@
 name: build and release
 on:
   push:
-    branches:
-      - main
+    tags:
+      - v*
 
 jobs:
   build:
@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]  # 三个平台
-#        os: [windows-latest, ubuntu-latest, macos-latest]  # 三个平台
+      fail-fast: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
