@@ -15,12 +15,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
 
-      - name: Get the version
+      - name: Get tag version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
         shell: bash
       
-      - name: echo version
+      - name: Echo version
         run: echo ${{ steps.get_version.outputs.VERSION }}
       
       - name: Set up Python
@@ -56,8 +56,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TAG_RELEASE }}
         with:
-          tag_name: v0.0.1
-          release_name: Release v0.0.1
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          release_name: Release ${{ steps.get_version.outputs.VERSION }}
           draft: false
           prerelease: false
       
