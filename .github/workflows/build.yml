@@ -51,15 +51,7 @@ jobs:
           ls
       
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TAG_RELEASE }}
-        with:
-          tag_name: ${{ steps.get_version.outputs.VERSION }}
-          release_name: Release ${{ steps.get_version.outputs.VERSION }}
-          draft: false
-          prerelease: false
+        run: python create_release.py ${{ steps.get_version.outputs.VERSION }}
       
       - name: Upload Release Asset
         id: upload-release-asset
