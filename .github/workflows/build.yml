@@ -9,7 +9,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+<<<<<<< HEAD
         os: [windows-latest]  # 三个平台
+=======
+        os: [windows-latest, macos-latest]  # 三个平台
+>>>>>>> d778fd816e39edf42acafaa47e285641e4de9254
       fail-fast: false
     steps:
       - name: Checkout code
@@ -42,6 +46,7 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip list
+<<<<<<< HEAD
 #
 #      - name: Build executable
 #        run: |
@@ -63,4 +68,35 @@ jobs:
 #          asset_path: ./dist/countdown_dialog.exe
 #          asset_name: countdown_dialog.exe
 #          asset_content_type: application/x-msdownload
+=======
+
+      - name: Build executable
+        run: |
+          pyinstaller -F countdown_dialog.py
+          ls
+          cd dist
+          ls
+
+#      - name: Create Release
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.TAG_RELEASE }}
+#        with:
+#          tag_name: v0.0.2
+#          release_name: Release v0.0.2
+#          draft: false
+#          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TAG_RELEASE }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  # This pulls from the CREATE RELEASE step above, referencing it's ID
+          asset_path: ./${{ matrix.os == 'windows-latest' && 'dist/countdown_dialog.exe' || 'dist/countdown_dialog.pkg' }}
+          asset_name: myproject-${{ matrix.os == 'windows-latest' && 'windows.exe' || 'macos.pkg' }}
+          asset_content_type: application/x-msdownload
+>>>>>>> d778fd816e39edf42acafaa47e285641e4de9254
           
