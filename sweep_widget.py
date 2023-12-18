@@ -47,6 +47,7 @@ class SweepInputWidget(QLineEdit):
 
 # 1. 指定正则
 
+
 class SweepWidget(QDialog):
     sweep_result_signal = Signal(dict)
 
